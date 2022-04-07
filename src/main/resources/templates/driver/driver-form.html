@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+	<title>Save Driver</title>
+</head>
+
+<body>
+
+	<div class="container">
+	
+		<h3>Driver Directory</h3>
+		<hr>
+		
+		<p class="h4 mb-4">Save Driver</p>
+	
+		<form action="#" th:action="@{/driver/save}"
+						 th:object="${driver}" method="POST">
+		
+			<!-- Add hidden form field to handle update -->
+			<input type="hidden" th:field="*{id}" />
+			
+			<input type="text" th:field="*{name}"
+					class="form-control mb-4 col-4" placeholder="Driver Name">
+					
+			<input type="date" th:field="*{dob}"
+					class="form-control mb-4 col-4">
+				
+			<button type="submit" class="btn btn-info col-2">Save</button>
+						
+		</form>
+	
+		<hr>
+		<a th:href="@{/driver/list}">Back to Driver List</a>
+		
+	</div>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+	<title>Save Shift</title>
+</head>
+
+<body>
+
+	<div class="container">
+	
+		<h3>Shift Directory</h3>
+		<hr>
+		
+		<p class="h4 mb-4">Save Shift</p>
+	
+		<form action="#" th:action="@{/shift/save}"
+						 th:object="${line}" method="POST">
+		
+			<!-- Add hidden form field to handle update -->
+			<input type="hidden" th:field="*{id}" />
+			<input type="hidden" th:field="*{name_of_line}" />
+			<input type="hidden" th:field="*{start_time}" />
+			<input type="hidden" th:field="*{end_time}" />
+			<input type="hidden" th:field="*{total_time}" />
+			<input type="hidden" th:field="*{num_drivers}" />
+			
+			<p>Select Shift One Driver</p>
+			<select name="shift_one">
+				<option th:each="driver : ${driversNames}" th:text="${driver}"></option>
+			</select>
+			
+			<br><br>
+			
+			<p>Select Shift Two Driver</p>
+			<select name="shift_two">
+				<option th:each="driver : ${driversNames}" th:text="${driver}"></option>
+			</select>
+			
+			<br><br>
+			
+			<p>Select Shift Three Driver</p>
+			<select name="shift_three">
+				<option th:each="driver : ${driversNames}" th:text="${driver}"></option>
+			</select>
+			
+			<br><br>
+					
+				
+			<button type="submit" class="btn btn-info col-2">Save</button>
+						
+		</form>
+	
+		<hr>
+		<a th:href="@{/shift/list}">Back to Shift List</a>
+		
+	</div>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+

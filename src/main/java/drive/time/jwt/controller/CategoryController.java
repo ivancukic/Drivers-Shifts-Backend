@@ -53,15 +53,8 @@ public class CategoryController {
 		}
 	}
 	
-//	@PutMapping(value="/update")
-//	public @ResponseBody ResponseEntity<Category> update(@RequestBody Category category) {
-//		
-//		return ResponseEntity.ok(categoryService.save(category));
-//	}
 	@PutMapping(value="/update/{id}")
 	public @ResponseBody ResponseEntity<Category> update(@PathVariable Integer id, @RequestBody Category category) {
-		
-		//return ResponseEntity.ok(categoryService.save(category));
 		
 		Optional<Category> categoryOpt = categoryService.findByID(id);
 		
@@ -82,7 +75,7 @@ public class CategoryController {
 	}
 	
 	@DeleteMapping("/delete/{id}")
-	public @ResponseBody ResponseEntity<?> delete(@PathVariable Integer id) {
+	public @ResponseBody ResponseEntity<Integer> delete(@PathVariable Integer id) {
 		
 		categoryService.delete(id);
 		

@@ -79,13 +79,7 @@ public class LineController {
 			
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
-		
-//		lineService.save(line);
-//		lineService.calcTotalTime(line.getEnd_time(), line.getStart_time());
-//		lineService.negativeTime();
-//		lineService.numberOfDrivers();
-//		
-//		return ResponseEntity.ok(lineService.save(line));
+
 	}
 	
 	@PostMapping(value = "/save")
@@ -104,11 +98,11 @@ public class LineController {
 	}
 	
 	@DeleteMapping("/delete/{id}")
-	public @ResponseBody ResponseEntity<String> delete(@PathVariable Integer id) {
+	public @ResponseBody ResponseEntity<Integer> delete(@PathVariable Integer id) {
 		
 		lineService.delete(id);
 		
-		return ResponseEntity.status(HttpStatus.OK).body("Line deleted!");
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

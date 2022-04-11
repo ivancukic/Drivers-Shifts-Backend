@@ -8,16 +8,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import drive.time.jwt.entity.DriversShifts;
-import drive.time.jwt.entity.Shift;
 import drive.time.jwt.service.DriversShiftsService;
 
 @RestController
@@ -55,12 +52,6 @@ public class DriversShiftsController {
 		}
 	}
 	
-	@PostMapping(value = "/save")
-	public @ResponseBody ResponseEntity<DriversShifts> save(@RequestBody DriversShifts driversShifts) {
-		
-		return ResponseEntity.ok(driversShiftsService.save(driversShifts));
-	}
-	
 	@PutMapping(value = "/changeShift/{id}")
 	public @ResponseBody ResponseEntity<DriversShifts> changeShift(@PathVariable Integer id, @RequestBody DriversShifts driversShifts) {
 		
@@ -74,27 +65,6 @@ public class DriversShiftsController {
 			driverShiftsOpt.get().setUser(driversShifts.getUser());
 			System.out.println("kraj");
 			return ResponseEntity.ok(driversShiftsService.save(driversShifts));
-		}
-		else {
-			
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); 
-		}
-	}
-	
-	@PutMapping(value = "/update/{id}")
-	public @ResponseBody ResponseEntity<DriversShifts> update(@RequestBody DriversShifts driversShifts) {
-		
-		
-		System.out.println("Pocetak");
-		Optional<DriversShifts> driverShiftsOpt = driversShiftsService.findByID(driversShifts.getId());
-//		Optional<DriversShifts> driverShiftsOpt = driversShiftsService.findByID(id);
-		
-		if(driverShiftsOpt != null) {
-			
-			driverShiftsOpt.get().setShift(driversShifts.getShift());
-			driverShiftsOpt.get().setUser(driversShifts.getUser());
-			System.out.println("kraj");
-			return ResponseEntity.ok(driversShiftsService.save(driverShiftsOpt.get()));
 		}
 		else {
 			

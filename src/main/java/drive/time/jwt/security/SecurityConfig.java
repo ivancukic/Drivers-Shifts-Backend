@@ -49,11 +49,37 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		
-//		http.authorizeRequests()
-//				.antMatchers("/api/authentication/**").permitAll()
-//				.antMatchers("/driver/list/**").permitAll()
-//				.antMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
-//				.anyRequest().authenticated();
+		http.authorizeRequests()
+				.antMatchers("/api/authentication/**").permitAll()
+				.antMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
+				.antMatchers("/api/category/**").permitAll()
+				.antMatchers("/api/driver/**").permitAll()
+				.antMatchers("/api/schedule/**").permitAll()
+				.antMatchers("/api/line/**").permitAll()
+				.antMatchers("/api/shift/**").permitAll()
+//				.antMatchers("/api/category/all").permitAll()
+//				.antMatchers("/api/category/get/**").hasRole(Role.ADMIN.name())
+//				.antMatchers("/api/category/save/**").hasRole(Role.ADMIN.name())
+//				.antMatchers("/api/category/update/**").hasRole(Role.ADMIN.name())
+//				.antMatchers("/api/category/delete/**").hasRole(Role.ADMIN.name())
+//				.antMatchers("/api/driver/all").permitAll()
+//				.antMatchers("/api/driver/get/**").permitAll()
+//				.antMatchers("/api/driver/save").hasRole(Role.ADMIN.name())
+//				.antMatchers("/api/driver/update/**").hasRole(Role.ADMIN.name())
+//				.antMatchers("/api/driver/delete/**").hasRole(Role.ADMIN.name())
+//				.antMatchers("/api/schedule/all").permitAll()
+//				.antMatchers("/api/schedule/get/**").hasRole(Role.ADMIN.name())
+//				.antMatchers("/api/line/all").permitAll()
+//				.antMatchers("/api/line/get/**").permitAll()
+//				.antMatchers("/api/line/save").hasRole(Role.ADMIN.name())
+//				.antMatchers("/api/line/update/**").hasRole(Role.ADMIN.name())
+//				.antMatchers("/api/line/delete/**").hasRole(Role.ADMIN.name())
+//				.antMatchers("/api/shift/all").permitAll()
+//				.antMatchers("/api/shift/get/**").hasRole(Role.ADMIN.name())
+//				.antMatchers("/api/shift/updateOne/**").hasRole(Role.ADMIN.name())
+//				.antMatchers("/api/shift/updateTwo/**").hasRole(Role.ADMIN.name())
+//				.antMatchers("/api/shift/updateThree/**").hasRole(Role.ADMIN.name())
+				.anyRequest().authenticated();
 		
 		
 		http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

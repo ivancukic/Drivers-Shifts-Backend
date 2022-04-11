@@ -18,13 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import drive.time.jwt.entity.Category;
 import drive.time.jwt.entity.Driver;
-import drive.time.jwt.entity.Line;
 import drive.time.jwt.entity.User;
 import drive.time.jwt.service.CategoryService;
 import drive.time.jwt.service.DriverService;
-import drive.time.jwt.service.LineService;
 import drive.time.jwt.service.UserService;
-import drive.time.jwt.service.DriversShiftsService;
 
 @RestController
 @RequestMapping("/api/driver")
@@ -32,19 +29,13 @@ public class DriverController {
 	
 	private DriverService driverService;
 	private CategoryService categoryService; 
-	private LineService lineService; 
 	private UserService userService; 
 
-//	@Autowired
-//	public DriverController(DriverService driverService) {
-//		this.driverService = driverService;
-//	}
 	
 	@Autowired
-	public DriverController(DriverService driverService, CategoryService categoryService, LineService lineService, UserService userService) {
+	public DriverController(DriverService driverService, CategoryService categoryService, UserService userService) {
 		this.driverService = driverService;
 		this.categoryService = categoryService;
-		this.lineService = lineService;
 		this.userService = userService;
 	}
 	
@@ -74,12 +65,8 @@ public class DriverController {
 	@PutMapping(value="/update/{id}")
 	public @ResponseBody ResponseEntity<Driver> update(@RequestBody Driver driver) {
 		
-		//List<Category> categoryList = categoryService.findAll();
-		//driver.setCategory(categoryList.get(0));
-		//Integer categoryId = Integer.parseInt(driver.getCategory().getName());
-		
 		Optional<Driver> driverOpt = driverService.findByID(driver.getId());
-		Optional<Category> categoryOpt = categoryService.findByID(driver.getCategory().getId()); // MORA GET NAME
+		Optional<Category> categoryOpt = categoryService.findByID(driver.getCategory().getId()); 
 		Optional<User> userOpt = userService.findByID(driver.getUser().getId());
 		
 		if(driverOpt.isPresent() && categoryOpt.isPresent()) {
@@ -98,60 +85,23 @@ public class DriverController {
 	@PostMapping(value = "/save")
 	public @ResponseBody ResponseEntity<Driver> save(@RequestBody Driver driver) {
 		
-		System.out.println("Usao u save");
-		System.out.println("Driver id " + driver.getId());
-		System.out.println("Driver name " + driver.getName());
-		System.out.println("Driver dob " + driver.getDob());
-		System.out.println("Driver Category NAME " + driver.getCategory().getName());
-		System.out.println("Driver Category tip je " + driver.getCategory().getName().getClass());
-		System.out.println("Driver Categori ID je " + driver.getCategory().getId());
-		System.out.println("Admin Id je " + driver.getUser().getId());
-		System.out.println("Admin Name je " + driver.getUser().getName());
-		System.out.println("Admin Username je " + driver.getUser().getUsername());
-	
-		
-		Integer categoryId = Integer.parseInt(driver.getCategory().getName());
-		
-		
-		Optional<Category> category = categoryService.findByID(categoryId);
-		//Optional<Category> category = categoryService.findByID(driver.getCategory().getId());
+
+		Optional<Category> category = categoryService.findByID(driver.getCategory().getId());
 		Optional<User> user = userService.findByID(driver.getUser().getId());
-		//Optional<Line> line = lineService.findByID(driver.getLines().get(0));
+		
 		
 		driver.setCategory(category.get());
 		driver.setUser(user.get());
-		//driver.setLines(line.get());
 			
 		return ResponseEntity.ok(driverService.save(driver));
 	}
 	
-//	@PostMapping(value = "/save")
-//	public @ResponseBody ResponseEntity<Driver> save(@PathVariable String categoryId, @RequestBody Driver driver) {
-//		
-//		System.out.println("Usao u save");
-//		System.out.println("Driver id " + driver.getId());
-//		System.out.println("Driver name " + driver.getName());
-//		System.out.println("Driver dob " + driver.getDob());
-//		System.out.println("Driver Category NAME " + driver.getCategory().getName());
-//		System.out.println("Driver Category tip je " + driver.getCategory().getName().getClass());
-//		System.out.println("Driver Category ID je " + driver.getCategory().getId());
-//		System.out.println("Driver Category ID STRING je " + categoryId);
-//		
-//		Integer id = Integer.parseInt(categoryId);
-//		
-//		Optional<Category> category = categoryService.findByID(id);
-//		
-//		driver.setCategory(category.get());
-//			
-//		return ResponseEntity.ok(driverService.save(driver));
-//	}
-	
 	@DeleteMapping("/delete/{id}")
-	public @ResponseBody ResponseEntity<String> delete(@PathVariable Integer id) {
+	public @ResponseBody ResponseEntity<Integer> delete(@PathVariable Integer id) {
 		
 		driverService.delete(id);
 		
-		return ResponseEntity.status(HttpStatus.OK).body("Driver deleted!");
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

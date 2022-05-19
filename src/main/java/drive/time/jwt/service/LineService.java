@@ -9,6 +9,7 @@ import drive.time.jwt.entity.Line;
 public interface LineService {
 	
 	public Line save(Line line);
+	
 	public List<Line> findAll();
 
 	public void delete(Integer id);

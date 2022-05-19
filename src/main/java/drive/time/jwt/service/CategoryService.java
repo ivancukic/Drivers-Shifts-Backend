@@ -15,6 +15,4 @@ public interface CategoryService {
 
 	Optional<Category> findByID(Integer id);
 	
-	Category findByIDCategory(Integer id);
-
 }

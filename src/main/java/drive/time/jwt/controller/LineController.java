@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import drive.time.jwt.entity.Driver;
 import drive.time.jwt.entity.Line;
 import drive.time.jwt.entity.User;
 import drive.time.jwt.service.LineService;
@@ -100,7 +101,19 @@ public class LineController {
 	@DeleteMapping("/delete/{id}")
 	public @ResponseBody ResponseEntity<Integer> delete(@PathVariable Integer id) {
 		
-		lineService.delete(id);
+		Optional<Line> lineOpt = lineService.findByID(id);
+		
+		if(lineOpt.isPresent()) {
+			
+			List<Driver> driverList = lineOpt.get().getDrivers();
+			
+			for(int i=0; i<driverList.size(); i++) {
+					
+				driverList.get(i).setActive(true);
+			}
+			
+			lineService.delete(id);
+		}
 		
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

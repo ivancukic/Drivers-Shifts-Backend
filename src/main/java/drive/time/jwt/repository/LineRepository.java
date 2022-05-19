@@ -27,15 +27,5 @@ public interface LineRepository extends JpaRepository<Line, Integer> {
 	@Modifying
 	@Query(value = "UPDATE `drive-time-db`.publiclines SET `num_drivers` = IF (`total_time` < '08:01:00', 1, IF (`total_time` < '16:01:00', 2, 3))", nativeQuery = true)
 	void numberOfDrivers();
-	
-	@Transactional
-	@Modifying
-	@Query(value = "UPDATE `drive-time-db`.drivers_shifts SET driver_id=?2  WHERE driver_id = ?1", nativeQuery = true)
-	void update(Integer shiftId, Integer driverId);
-	
-	@Transactional
-	@Modifying
-	@Query(value = "UPDATE `drive-time-db`.drivers_shifts SET driver_id = ?1 WHERE id = ?2", nativeQuery = true)
-	void customUpdateDriverShift(Integer driverId, Integer driverShiftsId);
 
 }

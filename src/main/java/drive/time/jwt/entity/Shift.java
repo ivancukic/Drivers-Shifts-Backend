@@ -4,6 +4,7 @@ public enum Shift {
 	
 	FIRST_SHIFT,
 	SECOND_SHIFT,
-	THIRD_SHIFT
+	THIRD_SHIFT,
+	CHANGE_SHIFT
 
 }

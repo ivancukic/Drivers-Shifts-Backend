@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import drive.time.jwt.entity.Driver;
 import drive.time.jwt.entity.Line;
 import drive.time.jwt.entity.Shift;
+import drive.time.jwt.exception.DriverExceptions;
 import drive.time.jwt.entity.DriversShifts;
 import drive.time.jwt.service.DriverService;
 import drive.time.jwt.service.LineService;
@@ -64,18 +66,25 @@ public class ShiftController {
 	
 	@PutMapping(value="/updateOne/{id}")
 	public @ResponseBody ResponseEntity<DriversShifts> updateOne(@PathVariable Integer id, 
-																   	  		   Integer driverOneId, @RequestBody Line line) {
+																   	  		   Integer driverOneId, @RequestBody Line line) throws DriverExceptions {
+		
+		if(driverOneId == null) {
+			
+			throw new DriverExceptions("Driver can't be blank!");
+		}
 		
 		Optional<Line> lineOpt = lineService.findByID(id);
+		// PREVIOUS DRIVERS
+		List<Driver> oldDrivers = driversShiftsService.oldDrivers(id);
 		 
-		  if(lineOpt.isPresent()) {
+		 if(lineOpt.isPresent()) {
 		
 			Optional<Driver> driverOne = driverService.findByID(driverOneId);
 			List<Driver> driverList = new ArrayList<>();
 			driverList.add(driverOne.get());
 			
 			line.setDrivers(driverList);
-			
+	
 			lineService.save(line);
 			
 			Integer driversShiftsId = driversShiftsService.findLineAndDriver(id, driverOneId);
@@ -83,7 +92,13 @@ public class ShiftController {
 			
 			driversShiftsOne.get().setShift(Shift.FIRST_SHIFT);
 			driversShiftsOne.get().setUser(line.getUser());
-		
+			driverOne.get().setActive(false);
+			
+			// OLD DRIVERS ON ACTIVE
+			for(int i=0; i<oldDrivers.size(); i++) {
+									
+				oldDrivers.get(i).setActive(true);
+			}
 
 			return ResponseEntity.ok(driversShiftsService.save(driversShiftsOne.get()));
 		} 
@@ -96,10 +111,22 @@ public class ShiftController {
 	@PutMapping(value="/updateTwo/{id}")
 	public @ResponseBody ResponseEntity<DriversShifts> updateTwo(@PathVariable Integer id, 
 																   	  		   Integer driverOneId, 
-																   	  		   Integer driverTwoId, @RequestBody Line line) {
+																   	  		   Integer driverTwoId, @RequestBody Line line) throws DriverExceptions {
+		
+		if(driverOneId == driverTwoId) {
+			
+			throw new DriverExceptions("You have two same drivers!");
+		}
+		
+		if(driverOneId == null || driverTwoId == null) {
+			
+			throw new DriverExceptions("Driver can't be blank!");
+		}
 		  
 		  
 		 Optional<Line> lineOpt = lineService.findByID(id);
+		 // PREVIOUS DRIVERS 
+		 List<Driver> oldDrivers = driversShiftsService.oldDrivers(id);
 		 
 		  if(lineOpt.isPresent()) {
 		  
@@ -110,7 +137,7 @@ public class ShiftController {
 			  
 			  driverList.add(driverOneOpt.get());
 			  driverList.add(driverTwoOpt.get());
-			
+				
 			  line.setDrivers(driverList);
 			  
 			  lineService.save(line);
@@ -125,12 +152,20 @@ public class ShiftController {
 				  
 			  driversShiftsOne.get().setShift(Shift.FIRST_SHIFT);
 			  driversShiftsOne.get().setUser(line.getUser());
+			  driverOneOpt.get().setActive(false);
 				  
 			  driversShiftsService.save(driversShiftsOne.get());
 			  
 				  
 			  driversShiftsTwo.get().setShift(Shift.SECOND_SHIFT);
 			  driversShiftsTwo.get().setUser(line.getUser());
+			  driverTwoOpt.get().setActive(false);
+			  
+			  // OLD DRIVERS ON ACTIVE
+			  for(int i=0; i<oldDrivers.size(); i++) {
+					
+				oldDrivers.get(i).setActive(true);
+			  }
 				  
 		  
 		  return ResponseEntity.ok(driversShiftsService.save(driversShiftsTwo.get()));
@@ -145,10 +180,22 @@ public class ShiftController {
 	public @ResponseBody ResponseEntity<DriversShifts> update(@PathVariable Integer id, 
 																   Integer driverOneId, 
 																   Integer driverTwoId, 
-																   Integer driverThreeId, @RequestBody Line line) {
+																   Integer driverThreeId, @RequestBody Line line) throws DriverExceptions {
 		
-		  
+		
+		if(driverOneId == driverTwoId || driverOneId == driverThreeId || driverTwoId == driverThreeId) {
+			
+			throw new DriverExceptions("You have same driver in your shifts, check your shifts!");
+		}
+		
+		if(driverOneId == null || driverTwoId == null || driverThreeId == null) {
+			
+			throw new DriverExceptions("Driver can't be blank!");
+		}
+		
 		 Optional<Line> lineOpt = lineService.findByID(id);
+		 // PREVIOUS DRIVERS 
+		 List<Driver> oldDrivers = driversShiftsService.oldDrivers(id);
 		 
 		  if(lineOpt.isPresent()) {
 		  
@@ -178,15 +225,23 @@ public class ShiftController {
 				  
 			  driversShiftsOne.get().setShift(Shift.FIRST_SHIFT);
 			  driversShiftsOne.get().setUser(line.getUser());
+			  driverOneOpt.get().setActive(false);
 			  driversShiftsService.save(driversShiftsOne.get());
 				
 			  driversShiftsTwo.get().setShift(Shift.SECOND_SHIFT);
 			  driversShiftsTwo.get().setUser(line.getUser());
+			  driverTwoOpt.get().setActive(false);
 			  driversShiftsService.save(driversShiftsTwo.get());
-			  
 				  
 			  driversShiftsThree.get().setShift(Shift.THIRD_SHIFT);
 			  driversShiftsThree.get().setUser(line.getUser());
+			  driverThreeOpt.get().setActive(false);
+			  
+			  // OLD DRIVERS ON ACTIVE
+			  for(int i=0; i<oldDrivers.size(); i++) {
+					
+				oldDrivers.get(i).setActive(true);
+			  }
 			  
 		  
 		  return ResponseEntity.ok(driversShiftsService.save(driversShiftsThree.get()));

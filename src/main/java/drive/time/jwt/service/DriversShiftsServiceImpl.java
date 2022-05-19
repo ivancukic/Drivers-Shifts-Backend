@@ -1,23 +1,29 @@
 package drive.time.jwt.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import drive.time.jwt.entity.Driver;
 import drive.time.jwt.entity.DriversShifts;
+import drive.time.jwt.entity.Shift;
+import drive.time.jwt.repository.DriverRepository;
 import drive.time.jwt.repository.DriversShiftsRepository;
 
 @Service
 public class DriversShiftsServiceImpl implements DriversShiftsService {
 	
 	private DriversShiftsRepository driversShiftsRepository; 
+	private DriverRepository driverRepository; 
 	
 	
 	@Autowired
-	public DriversShiftsServiceImpl(DriversShiftsRepository driversShiftsRepository) {
+	public DriversShiftsServiceImpl(DriversShiftsRepository driversShiftsRepository, DriverRepository driverRepository) {
 		this.driversShiftsRepository = driversShiftsRepository;
+		this.driverRepository = driverRepository;
 	}
 
 
@@ -55,13 +61,64 @@ public class DriversShiftsServiceImpl implements DriversShiftsService {
 		
 		return queryInt;
 	}
+	
+
+	@Override
+	public List<Driver> oldDrivers(Integer lineId) {
+		
+		List<DriversShifts> driversShifts = driversShiftsRepository.lineListIds(lineId);
+		List<Driver> drivers = new ArrayList<>();
+		List<Integer> driversIds = new ArrayList<>();
+		
+		for(int i=0; i<driversShifts.size(); i++) {
+			
+			driversIds.add(driversShifts.get(i).getDriverId());
+		}
+		
+		for(int j=0; j<driversIds.size(); j++) {
+			
+			Optional<Driver> driver = driverRepository.findById(driversIds.get(j));
+			
+			drivers.add(driver.get());
+		}
+		
+		
+		return drivers;
+	}
+	
+
+	@Override
+	public Integer findLineId(Integer driversShiftsId) {
+		
+		return driversShiftsRepository.findLineId(driversShiftsId);
+	}
 
 
 
 	@Override
-	public void delete(Integer id) {
+	public List<DriversShifts> driversShiftsListByLine(Integer lineId) {
 		
-		driversShiftsRepository.deleteById(id);
+		List<DriversShifts> driversShifts = driversShiftsRepository.lineListIds(lineId);
+		
+		return driversShifts;
 	}
 
+
+
+	@Override
+	public boolean checkShift(List<DriversShifts> driversShifts, Shift shift) {
+		
+		for(int i=0; i<driversShifts.size(); i++) {
+			
+			if(driversShifts.get(i).getShift() == shift) {
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+
+	
 }

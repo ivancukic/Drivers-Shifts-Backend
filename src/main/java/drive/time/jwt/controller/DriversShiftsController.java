@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import drive.time.jwt.entity.Driver;
 import drive.time.jwt.entity.DriversShifts;
+import drive.time.jwt.exception.ShiftException;
+import drive.time.jwt.service.DriverService;
 import drive.time.jwt.service.DriversShiftsService;
 
 @RestController
@@ -22,10 +25,12 @@ import drive.time.jwt.service.DriversShiftsService;
 public class DriversShiftsController {
 	
 	private DriversShiftsService driversShiftsService;
+	private DriverService driverService;
 
 	@Autowired
-	public DriversShiftsController(DriversShiftsService driversShiftsService) {
+	public DriversShiftsController(DriversShiftsService driversShiftsService, DriverService driverService) {
 		this.driversShiftsService = driversShiftsService;
+		this.driverService = driverService;
 	}
 	
 	@GetMapping("/all")
@@ -53,17 +58,30 @@ public class DriversShiftsController {
 	}
 	
 	@PutMapping(value = "/changeShift/{id}")
-	public @ResponseBody ResponseEntity<DriversShifts> changeShift(@PathVariable Integer id, @RequestBody DriversShifts driversShifts) {
+	public @ResponseBody ResponseEntity<DriversShifts> changeShift(@PathVariable Integer id, @RequestBody DriversShifts driversShifts) throws ShiftException {
 		
 		
-		System.out.println("Pocetak");
 		Optional<DriversShifts> driverShiftsOpt = driversShiftsService.findByID(id);
+		Integer lineId = driversShiftsService.findLineId(id);
+		List<DriversShifts> driversShiftsList = driversShiftsService.driversShiftsListByLine(lineId);
+		
 		
 		if(driverShiftsOpt != null) {
 			
-			driverShiftsOpt.get().setShift(driversShifts.getShift());
-			driverShiftsOpt.get().setUser(driversShifts.getUser());
-			System.out.println("kraj");
+			if(driverShiftsOpt.get().getShift() == driversShifts.getShift()) {
+				
+				driverShiftsOpt.get().setDriverId(driversShifts.getDriverId());
+				driverShiftsOpt.get().setShift(driversShifts.getShift());
+				driverShiftsOpt.get().setUser(driversShifts.getUser());
+				Optional<Driver> oldDriver = driverService.findByID(driverShiftsOpt.get().getDriverId());
+				oldDriver.get().setActive(true);
+				
+			}
+			else if(driversShiftsService.checkShift(driversShiftsList, driversShifts.getShift()) == true) {
+				
+				throw new ShiftException("You can't have two Drivers on same shift! Please use option CHANGE_SHIFT!");
+			}
+			
 			return ResponseEntity.ok(driversShiftsService.save(driversShifts));
 		}
 		else {

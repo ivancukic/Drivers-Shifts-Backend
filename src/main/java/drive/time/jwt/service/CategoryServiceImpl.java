@@ -42,26 +42,6 @@ public class CategoryServiceImpl implements CategoryService {
 
 		return categoryRepository.findById(id);
 	}
-
-	@Override
-	public Category findByIDCategory(Integer id) {
-		
-		Optional<Category> result =categoryRepository.findById(id);
-		
-		Category category = null;
-		
-		if(result.isPresent()) {
-			
-			category = result.get();
-		}
-		else {
-			
-			throw new RuntimeException("Did not find!");
-		}
-
-		return category;
-	}
-	
 	
 
 }
